@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Velocidad lectora</title>
+    <style>
+        body {
+            background-color: #001bff;
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        #resultado {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 5px;
+            display: none;
+        }
+        #cuestionario {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #444;
+            border-radius: 5px;
+            display: none;
+        }
+        img {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            height: auto;
+        }
+        .pregunta {
+            margin-bottom: 15px;
+        }
+        .opciones {
+            margin-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Velocidad Lectora</h1>
+        <p>Esta herramienta te ayudará a medir tu velocidad de lectura. Selecciona un cuento para comenzar.</p>
+        
+        <button onclick="iniciarPrueba()">Comenzar Prueba</button>
+        
+        <div id="cuento"></div>
+        <div id="controles" style="display: none;">
+            <button id="btnInicio" onclick="empezarLectura()">Empezar a leer</button>
+            <button id="btnFin" onclick="terminarLectura()" disabled>Terminar lectura</button>
+        </div>
+        
+        <div id="resultado"></div>
+        <div id="cuestionario"></div>
+        
+        <img src="https://www.shutterstock.com/image-vector/cute-little-kids-boys-girls-260nw-2426509835.jpg" alt="Niños leyendo">
+    </div>
+
+    <script>
+        const cuentos = [
+            {
+                'titulo': "la cigueña y la zorra",
+                'texto': `Había una vez una cigüeña bonachona que se llamaba Picorrojo y vivía en la copa de un roble. En el tronco del mismo árbol vivía un anciano búho y un poco más abajo, entre las raíces del árbol, una zorra con muy mal genio a la que todos llamaban Malauva.
+La zorra se portaba muy mal con la cigüeña y siempre estaba buscando la forma de burlarse de ella. Por ejemplo, un día que Malauva invitó a Picorrojo a comer: 
+- Baja Picorrojo, que te invito a comer conmigo unas gachas que acabo de preparar. 
+Pero el animal había puesto las gachas en una piedra muy llana formando una capa muy fina porque sabía que así la cigüeña no podría comérselas. Y eso fue precisamente lo que ocurrió. La cigüeña no pudo picar nada y la zorra se las comió todas. Pero eso no fue todo, porque encima tuvo la cara de decirle: 
+- ¡Cómo te has puesto cigüeña! Ahora estarás varios días sin comer, ¿eh? 
+La pobre cigüeña no dijo nada y se subió a su nido con el mismo hambre con el que había bajado. 
+Un día el búho, que era amigo de la cigüeña y a quien no le gustaba nada la forma en que la zorra se burlaba de ella, tuvo una idea. 
+- Picorrojo, ve a buscar una caña en la que quepa tu pico y cuando la encuentras vuelve. Prepararemos unas migas y las meteremos dentro. Le dirás a la zorra que la invitas a comer y verás cómo nos reiremos de ella viendo cómo intenta comerlas. 
+El plan del búho funcionó perfectamente. La cigüeña metía una y otra vez su pico en la caña y cogía una buena ración de migas, mientras que Malauva lo intentaba con su hocico y no sacaba nada. Pero llegó un momento en el que la zorra perdió la paciencia y de repente cogió la caña con los dientes, la destrozó y se comió todas las migas. 
+El búho permaneció la noche entera pensando de qué forma podrían dar un escarmiento a la zorra y al final tuvo una idea. Al día siguiente el búho explicó a la cigüeña lo que debía hacer. Después fue Picorrojo y habló con Malauva: 
+- Comadre, vengo a contarle me han invitado a una boda en el cielo. Va a ser un festín. Habrá pavo relleno, gallina en pepitoria, pollitos dorados, queso, gorrinos al horno… Lástima que usted no pueda venir… a no ser que quiera subirse a mis espaldas. Yo podría llevarla si quiere venir. 
+- ¡Claro que quiero! - dijo Malauva relamiéndose sólo de pensar en toda esa comida 
+La cigüeña y la zorraAsí que se subió la zorra sobre las alas de la cigüeña y ésta echó a volar. Al rato dijo Picorrojo: 
+- ¡Ay! Creo que tiene pulgas 
+- ¿Yo? ¿Nada de eso! - dijo la zorra 
+- Yo sólo sé que me pica mucho la espalda así que agárrese bien que me voy a sacudir 
+Al sacudirse la zorra la cigüeña salió volando y por los aires. Menos mal que tuvo la suerte de caer encima de un arbusto y gracias a eso salió viva. 
+Cuando regresó a su madriguera hecha trizas y llena de heridas se encontró con el búho. 
+- ¿Qué? ¿Cómo ha ido la boda? 
+- Bien, pero si salgo de ésta ya le digo que no iré a mas bodas en el cielo`,
+                'palabras': 570,
+                'preguntas': [
+                    {
+                        'pregunta': '¿Qué se puede inferir sobre la personalidad de la zorra Malauva?',
+                        'opciones': ['Es bromista pero inofensiva',' Es egoísta y cruel',' Es educada y generosa ','Es astuta y vengativa'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Por qué el búho decidió ayudar a Picorrojo?',
+                        'opciones': [' Porque quería burlarse de la zorra también',' Porque era amigo de la cigüeña y no toleraba las injusticias ','Porque la zorra lo molestaba también ','Porque la cigüeña no podía defenderse sola'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': 'El plan del búho con la caña demostró que se puede devolver la burla con astucia y sin violencia.',
+                        'opciones': ['verdadero','falso'],
+                        'respuesta': 0
+                    },
+                    {
+                        'pregunta': '¿Cuál podría ser la intención del autor al mostrar cómo la cigüeña se vengó? ',
+                        'opciones': ['Enseñar que siempre es mejor perdonar ',' Mostrar que las bromas pueden tener consecuencias','Defender la violencia como solución','Justificar que el más débil nunca gana'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué lección deja el final del cuento cuando la zorra cae del cielo?',
+                        'opciones': [' Que la violencia resuelve todo','Que quien mal obra, mal acaba',' Que hay que saber volar','Que la venganza no sirve'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta':'La actitud de la cigüeña al final demuestra que aprendió a usar la inteligencia para defenderse.',
+                        'opciones': ['Verdaero','Falso'],
+                        'respuesta': 0
+                    },
+                    {
+                        'pregunta':'¿Qué muestra el cuento sobre la importancia de la amistad, a través del personaje del búho?',
+                        'opciones': ['Que los amigos sirven para jugar','Que un amigo verdadero cuida y apoya al otro ','Que los amigos siempre hacen bromas','Que es mejor estar solo que mal acompañado'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta':'¿Qué simboliza la “boda en el cielo” en el plan de venganza de la cigüeña?',
+                        'opciones': ['Un castigo celestial','Una ilusión para engañar a Malauva',' Una fiesta entre aves','Una promesa de reconciliación'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': ' La zorra aprendió una lección al final del cuento y cambió su comportamiento.',
+                        'opciones': ['Verdero','Falso'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué enseñanza crítica se puede obtener del cuento en relación con el abuso de poder?',
+                        'opciones': ['Que quien es fuerte debe proteger al débil','Que siempre gana el más astuto','Que la justicia llega de forma inesperada','Que burlarse de otros es parte de la vida'],
+                        'respuesta': 2
+                    }
+                ]
+            },
+            {
+                'titulo': "Caperucita Roja",
+                'texto': `Había una vez una niña llamada Caperucita Roja, que vivía en un bosque con su madre. Un día, su madre le dijo: 
+Lleva esta cesta con pan y miel a tu abuela. Está enferma y esto la animará. No hables con extraños y ve directo por el camino.
+Caperucita Roja asintió y partió. En el bosque, un lobo la vio y le preguntó:
+—¿Adónde vas, niña bonita?
+—A casa de mi abuela, al otro lado del bosque —respondió ella, olvidando la advertencia.
+El lobo, astuto, corrió a la casa de la abuela, llamó a la puerta y fingió ser Caperucita. La abuela abrió y él la encerró en el armario. Luego, se puso su gorro y se metió en la cama.
+Cuando Caperucita llegó, notó algo raro:
+—Abuela, ¡qué ojos más grandes tienes!
+—Son para verte mejor —dijo el lobo.
+—¡Y qué orejas más grandes!
+—Son para oírte mejor.
+—¡Y qué dientes más grandes!
+—¡Son para comerte mejor! —rugió el lobo, saltando de la cama.
+En ese momento, un leñador que escuchó los gritos entró con su hacha y asustó al lobo, que huyó para nunca volver. La abuela salió del armario y abrazó a Caperucita, quien prometió nunca más desobedecer.`,
+                'palabras': 250,
+                'preguntas': [
+                    {
+                        'pregunta': '¿Qué alimentos llevaba Caperucita en su cesta?',
+                        'opciones': ['Manzanas y peras', 'Pan y miel', 'Queso y vino', 'Galletas y chocolate'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué advertencia le dio su madre?',
+                        'opciones': ['Que no se mojara', 'Que no hablara con extraños', 'Que corriera rápido', 'Que cantara fuerte'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Dónde escondió el lobo a la abuela?',
+                        'opciones': ['En el sótano', 'En el armario', 'En el ático', 'En el jardín'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Quién rescató a Caperucita?',
+                        'opciones': ['Un policía', 'Un leñador', 'Un cazador', 'Su padre'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué prometió Caperucita al final?',
+                        'opciones': ['Comer más verduras', 'Nunca más desobedecer', 'Visitar más a su abuela', 'Aprender a cocinar'],
+                        'respuesta': 1
+                    }
+                ]
+            },
+            {
+                'titulo': "La Gallina de los Huevos de Oro",
+                'texto': `Había una vez un granjero pobre que vivía con su esposa en una pequeña cabaña. Un día, su gallina, la más gordita del corral, puso un huevo brillante. Al recogerlo, el granjero casi se cae de espaldas: ¡era de oro puro!
+—¡Mira, mujer! —gritó emocionado—. ¡Nuestra gallina es mágica!
+Al día siguiente, la gallina puso otro huevo de oro, y así durante una semana. El granjero y su esposa vendieron los huevos y se llenaron de lujos: compraron vestidos, comida fina y hasta una carreta nueva.
+Pero el granjero, ávido de riqueza, empezó a impacientarse:
+—¿Por qué esperar a que ponga un huevo cada día? ¡Si la abrimos, sacaremos todo el oro de una vez!
+Su esposa trató de detenerlo:
+—¡No seas tonto! Si la matas, no tendremos más oro.
+Pero el granjero no escuchó. Tomó un cuchillo, mató a la gallina y la abrió... solo para descubrir que por dentro era igual que todas las demás. No había oro, ni joyas, ni nada.
+Al día siguiente, sin gallina y sin huevos, el granjero y su esposa volvieron a ser pobres. El hombre lloró de arrepentimiento, pero ya era tarde.
+Moraleja: La avaricia rompe el saco. Quien todo lo quiere, todo lo pierde.`,
+                'palabras': 250,
+                'preguntas': [
+                    {
+                        'pregunta': '¿Qué ponía la gallina que sorprendió al granjero?',
+                        'opciones': ['Huevos de chocolate', 'Huevos de oro', 'Huevos gigantes', 'Huevos de colores'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué compraron con el dinero de los huevos?',
+                        'opciones': ['Una casa nueva', 'Vestidos y comida fina', 'Un coche', 'Un televisor'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Por qué decidió el granjero matar a la gallina?',
+                        'opciones': ['Porque estaba enferma', 'Para conseguir todo el oro de una vez', 'Porque ya no ponía huevos', 'Porque su esposa se lo pidió'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Qué encontró dentro de la gallina?',
+                        'opciones': ['Muchas monedas de oro', 'Nada especial', 'Un mapa del tesoro', 'Un diamante'],
+                        'respuesta': 1
+                    },
+                    {
+                        'pregunta': '¿Cuál es la moraleja de la historia?',
+                        'opciones': ['No hay que confiar en los animales', 'La avaricia rompe el saco', 'El oro no da la felicidad', 'Hay que compartir lo que se tiene'],
+                        'respuesta': 1
+                    }
+                ]
+            }
+        ];
+
+        let cuentoActual;
+        let inicioTiempo;
+        let finTiempo;
+        let respuestasCorrectas = 0;
+
+        function iniciarPrueba() {
+            respuestasCorrectas = 0;
+            // Seleccionar un cuento al azar
+            cuentoActual = cuentos[Math.floor(Math.random() * cuentos.length)];
+            
+            // Mostrar el cuento
+            document.getElementById('cuento').innerHTML = `
+                <h2>${cuentoActual.titulo}</h2>
+                <p>${cuentoActual.texto.replace(/\n/g, '<br>')}</p>
+                <p><strong>Palabras:</strong> ${cuentoActual.palabras}</p>
+            `;
+            
+            // Mostrar controles
+            document.getElementById('controles').style.display = 'block';
+            document.getElementById('btnFin').disabled = true;
+            
+            // Ocultar resultado anterior
+            document.getElementById('resultado').style.display = 'none';
+            document.getElementById('cuestionario').style.display = 'none';
+        }
+
+        function empezarLectura() {
+            inicioTiempo = new Date();
+            document.getElementById('btnInicio').disabled = true;
+            document.getElementById('btnFin').disabled = false;
+            alert("¡Empieza a leer ahora! Presiona el botón 'Terminar lectura' cuando hayas terminado.");
+        }
+
+        function terminarLectura() {
+            finTiempo = new Date();
+            document.getElementById('btnInicio').disabled = false;
+            document.getElementById('btnFin').disabled = true;
+            
+            calcularResultados();
+        }
+
+        function verificarRespuestas() {
+            const preguntas = cuentoActual.preguntas;
+            respuestasCorrectas = 0;
+            
+            for (let i = 0; i < preguntas.length; i++) {
+                const selected = document.querySelector(`input[name="pregunta${i}"]:checked`);
+                if (selected && parseInt(selected.value) === preguntas[i].respuesta) {
+                    respuestasCorrectas++;
+                }
+            }
+            
+            const porcentaje = (respuestasCorrectas / preguntas.length) * 100;
+            let nivelComprension = "";
+            
+            if (porcentaje >= 80) {
+                nivelComprension = "Excelente comprensión lectora";
+            } else if (porcentaje >= 60) {
+                nivelComprension = "Buena comprensión lectora";
+            } else if (porcentaje >= 40) {
+                nivelComprension = "Comprensión lectora regular";
+            } else {
+                nivelComprension = "Comprensión lectora baja";
+            }
+            
+            document.getElementById('resultado').innerHTML += `
+                <h3>Resultados del Cuestionario</h3>
+                <p><strong>Respuestas correctas:</strong> ${respuestasCorrectas} de ${preguntas.length}</p>
+                <p><strong>Porcentaje de aciertos:</strong> ${porcentaje.toFixed(0)}%</p>
+                <p><strong>Nivel de comprensión:</strong> ${nivelComprension}</p>
+            `;
+        }
+
+        function calcularResultados() {
+            const tiempoSegundos = (finTiempo - inicioTiempo) / 1000;
+            const velocidad = (cuentoActual.palabras / (tiempoSegundos / 60)).toFixed(0);
+            
+            let nivel = "";
+            if (velocidad < 150) {
+                nivel = "Lector básico";
+            } else if (velocidad >= 150 && velocidad < 250) {
+                nivel = "Lector intermedio";
+            } else {
+                nivel = "Lector avanzado";
+            }
+            
+            document.getElementById('resultado').innerHTML = `
+                <h3>Resultados de Velocidad</h3>
+                <p><strong>Tiempo de lectura:</strong> ${tiempoSegundos.toFixed(1)} segundos</p>
+                <p><strong>Velocidad lectora:</strong> ${velocidad} palabras por minuto</p>
+                <p><strong>Nivel:</strong> ${nivel}</p>
+            `;
+            document.getElementById('resultado').style.display = 'block';
+            
+            // Mostrar cuestionario
+            let preguntasHTML = '<h3>Cuestionario de Comprensión</h3>';
+            cuentoActual.preguntas.forEach((pregunta, index) => {
+                preguntasHTML += `
+                    <div class="pregunta">
+                        <p>${index + 1}. ${pregunta.pregunta}</p>
+                        <div class="opciones">
+                            ${pregunta.opciones.map((opcion, i) => `
+                                <label>
+                                    <input type="radio" name="pregunta${index}" value="${i}">
+                                    ${opcion}
+                                </label><br>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            preguntasHTML += '<button onclick="verificarRespuestas()">Verificar respuestas</button>';
+            document.getElementById('cuestionario').innerHTML = preguntasHTML;
+            document.getElementById('cuestionario').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

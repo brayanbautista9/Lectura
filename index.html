@@ -70,7 +70,9 @@
         
         <button onclick="iniciarPrueba()">Comenzar Prueba</button>
         
-        <div id="cuento"></div>
+        <div id="cuento-container">
+            <div id="cuento"></div>
+        </div>
         <div id="controles" style="display: none;">
             <button id="btnInicio" onclick="empezarLectura()">Empezar a leer</button>
             <button id="btnFin" onclick="terminarLectura()" disabled>Terminar lectura</button>
@@ -102,7 +104,7 @@ La cigüeña y la zorraAsí que se subió la zorra sobre las alas de la cigüeñ
 - ¡Ay! Creo que tiene pulgas 
 - ¿Yo? ¿Nada de eso! - dijo la zorra 
 - Yo sólo sé que me pica mucho la espalda así que agárrese bien que me voy a sacudir 
-Al sacudirse la zorra la cigüeña salió volando y por los aires. Menos mal que tuvo la suerte de caer encima de un arbusto y gracias a eso salió viva. 
+Al sacudirse la cigüeña la zorra salió volando y por los aires. Menos mal que tuvo la suerte de caer encima de un arbusto y gracias a eso salió viva. 
 Cuando regresó a su madriguera hecha trizas y llena de heridas se encontró con el búho. 
 - ¿Qué? ¿Cómo ha ido la boda? 
 - Bien, pero si salgo de ésta ya le digo que no iré a mas bodas en el cielo`,
@@ -144,7 +146,7 @@ Cuando regresó a su madriguera hecha trizas y llena de heridas se encontró con
                         'respuesta': 1
                     },
                     {
-                        'pregunta':'¿Qué simboliza la “boda en el cielo” en el plan de venganza de la cigüeña?',
+                        'pregunta':'¿Qué simboliza la "boda en el cielo" en el plan de venganza de la cigüeña?',
                         'opciones': ['Un castigo celestial','Una ilusión para engañar a Malauva',' Una fiesta entre aves','Una promesa de reconciliación'],
                         'respuesta': 1
                     },
@@ -255,6 +257,9 @@ Moraleja: La avaricia rompe el saco. Quien todo lo quiere, todo lo pierde.`,
 
         function iniciarPrueba() {
             respuestasCorrectas = 0;
+            // Mostrar el contenedor del cuento
+            document.getElementById('cuento-container').style.display = 'block';
+            
             // Seleccionar un cuento al azar
             cuentoActual = cuentos[Math.floor(Math.random() * cuentos.length)];
             
@@ -285,6 +290,9 @@ Moraleja: La avaricia rompe el saco. Quien todo lo quiere, todo lo pierde.`,
             finTiempo = new Date();
             document.getElementById('btnInicio').disabled = false;
             document.getElementById('btnFin').disabled = true;
+            
+            // Ocultar el cuento después de terminar la lectura
+            document.getElementById('cuento-container').style.display = 'none';
             
             calcularResultados();
         }
